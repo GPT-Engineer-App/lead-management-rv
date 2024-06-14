@@ -54,7 +54,19 @@ const SalesmanDashboard = () => {
     onClose();
     toast({
       title: "Lead saved.",
-      description: "The lead has been saved successfully.",
+      description: "The lead has been assigned to a salesman and saved successfully.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const reassignLead = (index, newSalesman) => {
+    const updatedLeads = leads.map((lead, i) => (i === index ? { ...lead, salesman: newSalesman } : lead));
+    setLeads(updatedLeads);
+    toast({
+      title: "Lead reassigned.",
+      description: "The lead has been reassigned successfully.",
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -91,6 +103,17 @@ const SalesmanDashboard = () => {
                 <>
                   <Text>{lead.firstName} {lead.lastName}</Text>
                   <Box>
+                    <Select
+                      value={lead.salesman}
+                      onChange={(e) => reassignLead(index, e.target.value)}
+                      placeholder="Reassign Salesman"
+                      width="150px"
+                      mr={2}
+                    >
+                      <option value="Salesman 1">Salesman 1</option>
+                      <option value="Salesman 2">Salesman 2</option>
+                      <option value="Salesman 3">Salesman 3</option>
+                    </Select>
                     <IconButton
                       aria-label="Edit"
                       icon={<FaEdit />}
