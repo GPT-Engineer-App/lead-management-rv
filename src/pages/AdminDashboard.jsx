@@ -135,9 +135,11 @@ const AdminDashboard = () => {
         </Button>
         <SimpleGrid columns={1} spacing={4} width="100%">
           {leads.filter(lead => 
-            lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) &&
-            lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase()) &&
-            lead.phoneNumber.includes(filter.phoneNumber) &&
+            lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) ||
+            lead.lastName.toLowerCase().includes(filter.firstName.toLowerCase()) ||
+            lead.firstName.toLowerCase().includes(filter.lastName.toLowerCase()) ||
+            lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase()) ||
+            lead.phoneNumber.includes(filter.phoneNumber) ||
             lead.leadSource.toLowerCase().includes(filter.leadSource.toLowerCase())
           ).map((lead, index) => (
             <Card key={index} borderWidth="1px" borderRadius="lg">
