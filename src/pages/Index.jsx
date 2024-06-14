@@ -4,23 +4,14 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 
 const Index = () => {
   const [leads, setLeads] = useState([]);
-  const [leadName, setLeadName] = useState("");
-  const [leadContact, setLeadContact] = useState("");
-  const [leadInterest, setLeadInterest] = useState("");
+  const [newLead, setNewLead] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
 
   const addLead = () => {
-    if (leadName.trim() !== "" && leadContact.trim() !== "" && leadInterest.trim() !== "") {
-      const newLead = {
-        name: leadName,
-        contact: leadContact,
-        interest: leadInterest,
-      };
+    if (newLead.trim() !== "") {
       setLeads([...leads, newLead]);
-      setLeadName("");
-      setLeadContact("");
-      setLeadInterest("");
+      setNewLead("");
     }
   };
 
@@ -46,19 +37,9 @@ const Index = () => {
         <Heading>Sales Lead Management Tool</Heading>
         <HStack width="100%">
           <Input
-            placeholder="Enter lead name"
-            value={leadName}
-            onChange={(e) => setLeadName(e.target.value)}
-          />
-          <Input
-            placeholder="Enter contact details"
-            value={leadContact}
-            onChange={(e) => setLeadContact(e.target.value)}
-          />
-          <Input
-            placeholder="Enter RV interests"
-            value={leadInterest}
-            onChange={(e) => setLeadInterest(e.target.value)}
+            placeholder="Enter new lead"
+            value={newLead}
+            onChange={(e) => setNewLead(e.target.value)}
           />
           <Button onClick={addLead} colorScheme="teal">
             Add Lead
@@ -79,11 +60,7 @@ const Index = () => {
                 </HStack>
               ) : (
                 <>
-                  <Box>
-                    <Text><strong>Name:</strong> {lead.name}</Text>
-                    <Text><strong>Contact:</strong> {lead.contact}</Text>
-                    <Text><strong>Interest:</strong> {lead.interest}</Text>
-                  </Box>
+                  <Text>{lead}</Text>
                   <Box>
                     <IconButton
                       aria-label="Edit"
