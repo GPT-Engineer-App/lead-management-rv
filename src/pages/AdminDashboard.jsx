@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, VStack, Heading, Input, Button, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast, SimpleGrid, Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/react";
+import { Container, VStack, Heading, Input, Button, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast, SimpleGrid } from "@chakra-ui/react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
 const AdminDashboard = () => {
@@ -133,66 +133,60 @@ const AdminDashboard = () => {
         <Button onClick={onOpen} colorScheme="teal" mb={4}>
           Add New Lead
         </Button>
-        <SimpleGrid columns={1} spacing={4} width="100%">
+        <VStack spacing={4} width="100%">
           {leads.filter(lead => 
-            (lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) || 
-            lead.lastName.toLowerCase().includes(filter.firstName.toLowerCase())) &&
+            lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) &&
+            lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase()) &&
             lead.phoneNumber.includes(filter.phoneNumber) &&
             lead.leadSource.toLowerCase().includes(filter.leadSource.toLowerCase())
           ).map((lead, index) => (
-            <Card key={index} borderWidth="1px" borderRadius="lg">
-              <CardHeader>
-                <Heading size="md">{lead.firstName} {lead.lastName}</Heading>
-              </CardHeader>
-              <CardBody>
-                <Text>Phone: {lead.phoneNumber}</Text>
-                <Text>RV Type: {lead.rvType}</Text>
-                <Text>Lead Source: {lead.leadSource}</Text>
-                <Text>Salesman: {lead.salesman}</Text>
-                <Text>Status: {lead.status}</Text>
-                <Text>Notes: {lead.notes}</Text>
-              </CardBody>
-              <CardFooter>
-                <HStack width="100%">
-                  <Select
-                    value={lead.salesman}
-                    onChange={(e) => reassignLead(index, e.target.value)}
-                    placeholder="Reassign Salesman"
-                    width="150px"
-                    mr={2}
-                  >
-                    <option value="Salesman 1">Salesman 1</option>
-                    <option value="Salesman 2">Salesman 2</option>
-                    <option value="Salesman 3">Salesman 3</option>
-                  </Select>
-                  <Select
-                    value={lead.status}
-                    onChange={(e) => updateLeadStatus(index, e.target.value)}
-                    placeholder="Update Status"
-                    width="150px"
-                    mr={2}
-                  >
-                    <option value="new">New</option>
-                    <option value="contacted">Contacted</option>
-                    <option value="in progress">In Progress</option>
-                    <option value="closed">Closed</option>
-                  </Select>
-                  <IconButton
-                    aria-label="Edit"
-                    icon={<FaEdit />}
-                    onClick={() => startEdit(index)}
-                    mr={2}
-                  />
-                  <IconButton
-                    aria-label="Delete"
-                    icon={<FaTrash />}
-                    onClick={() => deleteLead(index)}
-                  />
-                </HStack>
-              </CardFooter>
-            </Card>
+            <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%">
+              <Heading size="md" mb={2}>{lead.firstName} {lead.lastName}</Heading>
+              <Text>Phone: {lead.phoneNumber}</Text>
+              <Text>RV Type: {lead.rvType}</Text>
+              <Text>Lead Source: {lead.leadSource}</Text>
+              <Text>Salesman: {lead.salesman}</Text>
+              <Text>Status: {lead.status}</Text>
+              <Text>Notes: {lead.notes}</Text>
+              <HStack width="100%" mt={4}>
+                <Select
+                  value={lead.salesman}
+                  onChange={(e) => reassignLead(index, e.target.value)}
+                  placeholder="Reassign Salesman"
+                  width="150px"
+                  mr={2}
+                >
+                  <option value="Salesman 1">Salesman 1</option>
+                  <option value="Salesman 2">Salesman 2</option>
+                  <option value="Salesman 3">Salesman 3</option>
+                </Select>
+                <Select
+                  value={lead.status}
+                  onChange={(e) => updateLeadStatus(index, e.target.value)}
+                  placeholder="Update Status"
+                  width="150px"
+                  mr={2}
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="in progress">In Progress</option>
+                  <option value="closed">Closed</option>
+                </Select>
+                <IconButton
+                  aria-label="Edit"
+                  icon={<FaEdit />}
+                  onClick={() => startEdit(index)}
+                  mr={2}
+                />
+                <IconButton
+                  aria-label="Delete"
+                  icon={<FaTrash />}
+                  onClick={() => deleteLead(index)}
+                />
+              </HStack>
+            </Box>
           ))}
-        </SimpleGrid>
+        </VStack>
       </VStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
