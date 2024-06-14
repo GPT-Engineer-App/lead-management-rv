@@ -15,7 +15,8 @@ const AdminDashboard = () => {
     rvType: "",
     leadSource: "",
     salesman: "",
-    notes: ""
+    notes: "",
+    status: "new" // Default status
   });
   const toast = useToast();
 
@@ -49,7 +50,8 @@ const AdminDashboard = () => {
       rvType: "",
       leadSource: "",
       salesman: "",
-      notes: ""
+      notes: "",
+      status: "new"
     });
     onClose();
     toast({
@@ -67,6 +69,18 @@ const AdminDashboard = () => {
     toast({
       title: "Lead reassigned.",
       description: "The lead has been reassigned successfully.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const updateLeadStatus = (index, newStatus) => {
+    const updatedLeads = leads.map((lead, i) => (i === index ? { ...lead, status: newStatus } : lead));
+    setLeads(updatedLeads);
+    toast({
+      title: "Lead status updated.",
+      description: "The lead status has been updated successfully.",
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -101,7 +115,7 @@ const AdminDashboard = () => {
                 </HStack>
               ) : (
                 <>
-                  <Text>{lead.firstName} {lead.lastName}</Text>
+                  <Text>{lead.firstName} {lead.lastName} - {lead.status}</Text>
                   <Box>
                     <Select
                       value={lead.salesman}
@@ -113,6 +127,18 @@ const AdminDashboard = () => {
                       <option value="Salesman 1">Salesman 1</option>
                       <option value="Salesman 2">Salesman 2</option>
                       <option value="Salesman 3">Salesman 3</option>
+                    </Select>
+                    <Select
+                      value={lead.status}
+                      onChange={(e) => updateLeadStatus(index, e.target.value)}
+                      placeholder="Update Status"
+                      width="150px"
+                      mr={2}
+                    >
+                      <option value="new">New</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="in progress">In Progress</option>
+                      <option value="closed">Closed</option>
                     </Select>
                     <IconButton
                       aria-label="Edit"
@@ -206,6 +232,19 @@ const AdminDashboard = () => {
                 value={formData.notes}
                 onChange={handleInputChange}
               />
+            </FormControl>
+            <FormControl id="status" mb={4}>
+              <FormLabel>Status</FormLabel>
+              <Select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+              >
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="in progress">In Progress</option>
+                <option value="closed">Closed</option>
+              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
