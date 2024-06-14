@@ -4,6 +4,7 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 
 const SalesmanDashboard = () => {
   const [leads, setLeads] = useState([]);
+  const [filter, setFilter] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -64,11 +65,17 @@ const SalesmanDashboard = () => {
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={4} width="100%">
         <Heading>Salesman Dashboard</Heading>
+        <Input
+          placeholder="Filter by first name"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          mb={4}
+        />
         <Button onClick={onOpen} colorScheme="teal">
           Add New Lead
         </Button>
         <List spacing={3} width="100%">
-          {leads.map((lead, index) => (
+          {leads.filter(lead => lead.firstName.toLowerCase().includes(filter.toLowerCase())).map((lead, index) => (
             <ListItem key={index} borderWidth="1px" borderRadius="lg" p={4} display="flex" justifyContent="space-between" alignItems="center">
               {editIndex === index ? (
                 <HStack width="100%">
