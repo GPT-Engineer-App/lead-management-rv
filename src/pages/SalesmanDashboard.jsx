@@ -88,8 +88,8 @@ const SalesmanDashboard = () => {
         </Button>
         <VStack spacing={4} width="100%">
           {leads.filter(lead => 
-            lead.firstName.toLowerCase().includes(filter.toLowerCase()) || 
-            lead.lastName.toLowerCase().includes(filter.toLowerCase())
+            (!filter || lead.firstName.toLowerCase().includes(filter.toLowerCase()) || 
+            lead.lastName.toLowerCase().includes(filter.toLowerCase()))
           ).map((lead, index) => (
             <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%" display="flex" justifyContent="space-between" alignItems="center">
               {editIndex === index ? (

@@ -135,10 +135,10 @@ const AdminDashboard = () => {
         </Button>
         <VStack spacing={4} width="100%">
           {leads.filter(lead => 
-            lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) &&
-            lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase()) &&
-            lead.phoneNumber.includes(filter.phoneNumber) &&
-            lead.leadSource.toLowerCase().includes(filter.leadSource.toLowerCase())
+            (!filter.firstName || lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase())) &&
+            (!filter.lastName || lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase())) &&
+            (!filter.phoneNumber || lead.phoneNumber.includes(filter.phoneNumber)) &&
+            (!filter.leadSource || lead.leadSource.toLowerCase().includes(filter.leadSource.toLowerCase()))
           ).map((lead, index) => (
             <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%">
               <Heading size="md" mb={2}>{lead.firstName} {lead.lastName}</Heading>
