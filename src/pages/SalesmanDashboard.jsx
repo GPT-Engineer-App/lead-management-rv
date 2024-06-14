@@ -86,12 +86,12 @@ const SalesmanDashboard = () => {
         <Button onClick={onOpen} colorScheme="teal">
           Add New Lead
         </Button>
-        <List spacing={3} width="100%">
+        <VStack spacing={4} width="100%">
           {leads.filter(lead => 
             lead.firstName.toLowerCase().includes(filter.toLowerCase()) || 
             lead.lastName.toLowerCase().includes(filter.toLowerCase())
           ).map((lead, index) => (
-            <ListItem key={index} borderWidth="1px" borderRadius="lg" p={4} display="flex" justifyContent="space-between" alignItems="center">
+            <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%" display="flex" justifyContent="space-between" alignItems="center">
               {editIndex === index ? (
                 <HStack width="100%">
                   <Input
@@ -131,9 +131,9 @@ const SalesmanDashboard = () => {
                   </Box>
                 </>
               )}
-            </ListItem>
+            </Box>
           ))}
-        </List>
+        </VStack>
       </VStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
