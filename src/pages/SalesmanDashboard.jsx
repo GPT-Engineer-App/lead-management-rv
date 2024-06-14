@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, VStack, Heading, Button, List, ListItem, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast } from "@chakra-ui/react";
+import { Container, VStack, Heading, Input, Button, List, ListItem, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast } from "@chakra-ui/react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
 const SalesmanDashboard = () => {
