@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { Container, VStack, Heading, Input, Button, List, ListItem, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast } from "@chakra-ui/react";
+import { Container, VStack, Heading, Input, Button, Text, Box, HStack, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, FormControl, FormLabel, Select, useToast, SimpleGrid } from "@chakra-ui/react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
 const SalesmanDashboard = () => {
   const [leads, setLeads] = useState([]);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    leadSource: ""
+  });
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -15,7 +20,8 @@ const SalesmanDashboard = () => {
     rvType: "",
     leadSource: "",
     salesman: "",
-    notes: ""
+    notes: "",
+    status: "new" // Default status
   });
   const toast = useToast();
 
@@ -40,6 +46,11 @@ const SalesmanDashboard = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter({ ...filter, [name]: value });
+  };
+
   const saveLead = () => {
     setLeads([...leads, formData]);
     setFormData({
@@ -49,7 +60,8 @@ const SalesmanDashboard = () => {
       rvType: "",
       leadSource: "",
       salesman: "",
-      notes: ""
+      notes: "",
+      status: "new"
     });
     onClose();
     toast({
@@ -73,64 +85,105 @@ const SalesmanDashboard = () => {
     });
   };
 
+  const updateLeadStatus = (index, newStatus) => {
+    const updatedLeads = leads.map((lead, i) => (i === index ? { ...lead, status: newStatus } : lead));
+    setLeads(updatedLeads);
+    toast({
+      title: "Lead status updated.",
+      description: "The lead status has been updated successfully.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={4} width="100%">
         <Heading>Salesman Dashboard</Heading>
-        <Input
-          placeholder="Filter by first name"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          mb={4}
-        />
-        <Button onClick={onOpen} colorScheme="teal">
+        <Box width="100%">
+          <Heading size="md" mb={4}>Search Leads</Heading>
+          <SimpleGrid columns={2} spacing={4} mb={4}>
+            <Input
+              placeholder="First Name"
+              name="firstName"
+              value={filter.firstName}
+              onChange={handleFilterChange}
+            />
+            <Input
+              placeholder="Last Name"
+              name="lastName"
+              value={filter.lastName}
+              onChange={handleFilterChange}
+            />
+            <Input
+              placeholder="Phone Number"
+              name="phoneNumber"
+              value={filter.phoneNumber}
+              onChange={handleFilterChange}
+            />
+            <Input
+              placeholder="Lead Source"
+              name="leadSource"
+              value={filter.leadSource}
+              onChange={handleFilterChange}
+            />
+          </SimpleGrid>
+        </Box>
+        <Button onClick={onOpen} colorScheme="teal" mb={4}>
           Add New Lead
         </Button>
         <VStack spacing={4} width="100%">
           {leads.filter(lead => 
-            lead.firstName.toLowerCase().includes(filter.toLowerCase()) || 
-            lead.lastName.toLowerCase().includes(filter.toLowerCase())
+            lead.firstName.toLowerCase().includes(filter.firstName.toLowerCase()) &&
+            lead.lastName.toLowerCase().includes(filter.lastName.toLowerCase()) &&
+            lead.phoneNumber.includes(filter.phoneNumber) &&
+            lead.leadSource.toLowerCase().includes(filter.leadSource.toLowerCase())
           ).map((lead, index) => (
-            <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%" display="flex" justifyContent="space-between" alignItems="center">
-              {editIndex === index ? (
-                <HStack width="100%">
-                  <Input
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                  />
-                  <Button onClick={saveEdit} colorScheme="teal">
-                    Save
-                  </Button>
-                </HStack>
-              ) : (
-                <>
-                  <Text>{lead.firstName} {lead.lastName}</Text>
-                  <Box>
-                    <Select
-                      value={lead.salesman}
-                      onChange={(e) => reassignLead(index, e.target.value)}
-                      placeholder="Reassign Salesman"
-                      width="150px"
-                      mr={2}
-                    >
-                      <option value="Salesman 1">Salesman 1</option>
-                      <option value="Salesman 2">Salesman 2</option>
-                      <option value="Salesman 3">Salesman 3</option>
-                    </Select>
-                    <IconButton
-                      aria-label="Edit"
-                      icon={<FaEdit />}
-                      onClick={() => startEdit(index)}
-                      mr={2}
-                    />
-                    <IconButton
-                      aria-label="Delete"
-                      icon={<FaTrash />}
-                      onClick={() => deleteLead(index)}
-                    />
-                  </Box>
-                </>
-              )}
+            <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%">
+              <Heading size="md" mb={2}>{lead.firstName} {lead.lastName}</Heading>
+              <Text>Phone: {lead.phoneNumber}</Text>
+              <Text>RV Type: {lead.rvType}</Text>
+              <Text>Lead Source: {lead.leadSource}</Text>
+              <Text>Salesman: {lead.salesman}</Text>
+              <Text>Status: {lead.status}</Text>
+              <Text>Notes: {lead.notes}</Text>
+              <HStack width="100%" mt={4}>
+                <Select
+                  value={lead.salesman}
+                  onChange={(e) => reassignLead(index, e.target.value)}
+                  placeholder="Reassign Salesman"
+                  width="150px"
+                  mr={2}
+                >
+                  <option value="Salesman 1">Salesman 1</option>
+                  <option value="Salesman 2">Salesman 2</option>
+                  <option value="Salesman 3">Salesman 3</option>
+                </Select>
+                <Select
+                  value={lead.status}
+                  onChange={(e) => updateLeadStatus(index, e.target.value)}
+                  placeholder="Update Status"
+                  width="150px"
+                  mr={2}
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="in progress">In Progress</option>
+                  <option value="closed">Closed</option>
+                </Select>
+                <IconButton
+                  aria-label="Edit"
+                  icon={<FaEdit />}
+                  onClick={() => startEdit(index)}
+                  mr={2}
+                />
+                <IconButton
+                  aria-label="Delete"
+                  icon={<FaTrash />}
+                  onClick={() => deleteLead(index)}
+                />
+              </HStack>
             </Box>
           ))}
         </VStack>
@@ -209,6 +262,19 @@ const SalesmanDashboard = () => {
                 value={formData.notes}
                 onChange={handleInputChange}
               />
+            </FormControl>
+            <FormControl id="status" mb={4}>
+              <FormLabel>Status</FormLabel>
+              <Select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+              >
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="in progress">In Progress</option>
+                <option value="closed">Closed</option>
+              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
