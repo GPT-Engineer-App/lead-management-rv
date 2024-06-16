@@ -25,6 +25,10 @@ const SalesmanDashboard = () => {
   });
   const toast = useToast();
 
+  const [isCommLogOpen, setIsCommLogOpen] = useState(false);
+  const [commLogData, setCommLogData] = useState([]);
+  const [currentLeadIndex, setCurrentLeadIndex] = useState(null);
+
   const deleteLead = (index) => {
     setLeads(leads.filter((_, i) => i !== index));
   };
@@ -95,6 +99,21 @@ const SalesmanDashboard = () => {
       duration: 5000,
       isClosable: true,
     });
+  };
+
+  const openCommLog = (index) => {
+    setCurrentLeadIndex(index);
+    setCommLogData(leads[index].commLog || []);
+    setIsCommLogOpen(true);
+  };
+
+  const addCommLogEntry = (entry) => {
+    const updatedCommLog = [...commLogData, entry];
+    setCommLogData(updatedCommLog);
+    const updatedLeads = leads.map((lead, index) => 
+      index === currentLeadIndex ? { ...lead, commLog: updatedCommLog } : lead
+    );
+    setLeads(updatedLeads);
   };
 
   return (
@@ -183,6 +202,7 @@ const SalesmanDashboard = () => {
                   icon={<FaTrash />}
                   onClick={() => deleteLead(index)}
                 />
+                <Button onClick={() => openCommLog(index)} colorScheme="blue" size="sm">Communication Log</Button>
               </HStack>
             </Box>
           ))}
@@ -282,6 +302,30 @@ const SalesmanDashboard = () => {
               Save
             </Button>
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isCommLogOpen} onClose={() => setIsCommLogOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Communication Log</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              {commLogData.map((entry, index) => (
+                <Box key={index} borderWidth="1px" borderRadius="lg" p={4} width="100%">
+                  <Text>{entry.type}: {entry.details}</Text>
+                  <Text>Date: {entry.date}</Text>
+                </Box>
+              ))}
+              <Button onClick={() => addCommLogEntry({ type: 'Email', details: 'Follow-up email', date: new Date().toLocaleString() })} colorScheme="teal">Add Email</Button>
+              <Button onClick={() => addCommLogEntry({ type: 'Call', details: 'Phone call', date: new Date().toLocaleString() })} colorScheme="teal">Add Call</Button>
+              <Button onClick={() => addCommLogEntry({ type: 'Meeting', details: 'In-person meeting', date: new Date().toLocaleString() })} colorScheme="teal">Add Meeting</Button>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={() => setIsCommLogOpen(false)}>Close</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
