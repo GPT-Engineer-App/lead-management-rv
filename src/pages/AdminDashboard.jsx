@@ -25,6 +25,11 @@ const AdminDashboard = () => {
   });
   const toast = useToast();
 
+  const [communicationLogs, setCommunicationLogs] = useState({});
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [logFormData, setLogFormData] = useState({ logType: "", logDetails: "" });
+  const [currentLeadIndex, setCurrentLeadIndex] = useState(null);
+
   const deleteLead = (index) => {
     setLeads(leads.filter((_, i) => i !== index));
   };
@@ -95,6 +100,47 @@ const AdminDashboard = () => {
       duration: 5000,
       isClosable: true,
     });
+  };
+
+  const addCommunicationLog = (leadIndex, log) => {
+    setCommunicationLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      if (!newLogs[leadIndex]) {
+        newLogs[leadIndex] = [];
+      }
+      newLogs[leadIndex].push(log);
+      return newLogs;
+    });
+  };
+
+  const deleteCommunicationLog = (leadIndex, logIndex) => {
+    setCommunicationLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      if (newLogs[leadIndex]) {
+        newLogs[leadIndex].splice(logIndex, 1);
+      }
+      return newLogs;
+    });
+  };
+
+  const openLogModal = (index) => {
+    setCurrentLeadIndex(index);
+    setIsLogModalOpen(true);
+  };
+
+  const onLogModalClose = () => {
+    setIsLogModalOpen(false);
+    setLogFormData({ logType: "", logDetails: "" });
+  };
+
+  const handleLogInputChange = (e) => {
+    const { name, value } = e.target;
+    setLogFormData({ ...logFormData, [name]: value });
+  };
+
+  const saveLog = (index) => {
+    addCommunicationLog(index, logFormData);
+    onLogModalClose();
   };
 
   return (
@@ -183,7 +229,15 @@ const AdminDashboard = () => {
                   icon={<FaTrash />}
                   onClick={() => deleteLead(index)}
                 />
+                <Button onClick={() => openLogModal(index)} colorScheme="teal" size="sm">Add Log</Button>
               </HStack>
+              {communicationLogs[index] && communicationLogs[index].map((log, logIndex) => (
+                <Box key={logIndex} mt={2} p={2} borderWidth="1px" borderRadius="md">
+                  <Text><strong>Type:</strong> {log.logType}</Text>
+                  <Text><strong>Details:</strong> {log.logDetails}</Text>
+                  <Button onClick={() => deleteCommunicationLog(index, logIndex)} colorScheme="red" size="xs" mt={2}>Delete</Button>
+                </Box>
+              ))}
             </Box>
           ))}
         </VStack>
@@ -282,6 +336,34 @@ const AdminDashboard = () => {
               Save
             </Button>
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isLogModalOpen} onClose={onLogModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Communication Log</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl id="logType" mb={4}>
+              <FormLabel>Type</FormLabel>
+              <Select name="logType" value={logFormData.logType} onChange={handleLogInputChange}>
+                <option value="email">Email</option>
+                <option value="call">Call</option>
+                <option value="meeting">Meeting</option>
+              </Select>
+            </FormControl>
+            <FormControl id="logDetails" mb={4}>
+              <FormLabel>Details</FormLabel>
+              <Input name="logDetails" value={logFormData.logDetails} onChange={handleLogInputChange} />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" mr={3} onClick={() => saveLog(currentLeadIndex)}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={onLogModalClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
