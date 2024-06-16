@@ -25,6 +25,53 @@ const SalesmanDashboard = () => {
   });
   const toast = useToast();
 
+  const [communicationLogs, setCommunicationLogs] = useState({});
+
+  const addCommunicationLog = (leadIndex, log) => {
+    setCommunicationLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      if (!newLogs[leadIndex]) {
+        newLogs[leadIndex] = [];
+      }
+      newLogs[leadIndex].push(log);
+      return newLogs;
+    });
+  };
+
+  const deleteCommunicationLog = (leadIndex, logIndex) => {
+    setCommunicationLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      if (newLogs[leadIndex]) {
+        newLogs[leadIndex].splice(logIndex, 1);
+      }
+      return newLogs;
+    });
+  };
+
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [logFormData, setLogFormData] = useState({ logType: "", logDetails: "" });
+  const [currentLeadIndex, setCurrentLeadIndex] = useState(null);
+
+  const openLogModal = (index) => {
+    setCurrentLeadIndex(index);
+    setIsLogModalOpen(true);
+  };
+
+  const onLogModalClose = () => {
+    setIsLogModalOpen(false);
+    setLogFormData({ logType: "", logDetails: "" });
+  };
+
+  const handleLogInputChange = (e) => {
+    const { name, value } = e.target;
+    setLogFormData({ ...logFormData, [name]: value });
+  };
+
+  const saveLog = (index) => {
+    addCommunicationLog(index, logFormData);
+    onLogModalClose();
+  };
+
   const deleteLead = (index) => {
     setLeads(leads.filter((_, i) => i !== index));
   };
@@ -282,6 +329,34 @@ const SalesmanDashboard = () => {
               Save
             </Button>
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isLogModalOpen} onClose={onLogModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Communication Log</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl id="logType" mb={4}>
+              <FormLabel>Type</FormLabel>
+              <Select name="logType" value={logFormData.logType} onChange={handleLogInputChange}>
+                <option value="email">Email</option>
+                <option value="call">Call</option>
+                <option value="meeting">Meeting</option>
+              </Select>
+            </FormControl>
+            <FormControl id="logDetails" mb={4}>
+              <FormLabel>Details</FormLabel>
+              <Input name="logDetails" value={logFormData.logDetails} onChange={handleLogInputChange} />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" mr={3} onClick={() => saveLog(currentLeadIndex)}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={onLogModalClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
