@@ -230,7 +230,15 @@ const SalesmanDashboard = () => {
                   icon={<FaTrash />}
                   onClick={() => deleteLead(index)}
                 />
+                <Button onClick={() => openLogModal(index)} colorScheme="blue" size="sm">Add Log</Button>
               </HStack>
+              {communicationLogs[index] && communicationLogs[index].map((log, logIndex) => (
+                <Box key={logIndex} mt={2} p={2} borderWidth="1px" borderRadius="md">
+                  <Text><strong>Type:</strong> {log.logType}</Text>
+                  <Text><strong>Details:</strong> {log.logDetails}</Text>
+                  <Button onClick={() => deleteCommunicationLog(index, logIndex)} colorScheme="red" size="xs" mt={2}>Delete Log</Button>
+                </Box>
+              ))}
             </Box>
           ))}
         </VStack>
